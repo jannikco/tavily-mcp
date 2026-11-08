@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "product": "pipmcp",
+  "credential": "PIPMCP_API_KEY",
+  "skills": [
+    {
+      "name": "pipmcp-tavily",
+      "description": "Connect AI agents to Tavily using one PipMCP API key and actual hosted tool discovery."
+    }
+  ],
+  "files": {
+    "skills/pipmcp-tavily/SKILL.md": "c1b22f6e8c7bc455c017f55495fe8a4d11469e26ebb9a6e938cf06f865aa5872"
+  }
+}
