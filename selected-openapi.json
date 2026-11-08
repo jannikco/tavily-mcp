@@ -1,0 +1,119 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Tavily selected operations",
+    "version": "0.1.0",
+    "description": "Reviewed local connector bindings for manual API import. No provider credentials are included; authentication and hosted execution require separate configuration and tests."
+  },
+  "servers": [
+    {
+      "url": "https://api.tavily.com"
+    }
+  ],
+  "paths": {
+    "/search": {
+      "post": {
+        "operationId": "search_web",
+        "summary": "Search with bounded result count; provider usage/credits still apply to read-only calls.",
+        "parameters": [],
+        "x-pipmcp-read-only": true,
+        "responses": {
+          "200": {
+            "description": "Provider response; inspect provider documentation for result fields."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000
+                  },
+                  "max_results": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 20
+                  },
+                  "search_depth": {
+                    "type": "string",
+                    "enum": [
+                      "basic",
+                      "advanced"
+                    ]
+                  }
+                },
+                "required": [
+                  "query"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/extract": {
+      "post": {
+        "operationId": "extract_urls",
+        "summary": "Extract supplied HTTPS URLs; inspect failed_results as well as results, even when HTTP status is 200.",
+        "parameters": [],
+        "x-pipmcp-read-only": true,
+        "responses": {
+          "200": {
+            "description": "Provider response; inspect provider documentation for result fields."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "urls": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 2048,
+                      "pattern": "^https://[^\\s]+$"
+                    },
+                    "minItems": 1,
+                    "maxItems": 20
+                  },
+                  "extract_depth": {
+                    "type": "string",
+                    "enum": [
+                      "basic",
+                      "advanced"
+                    ]
+                  }
+                },
+                "required": [
+                  "urls"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "providerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "providerAuth": []
+    }
+  ]
+}

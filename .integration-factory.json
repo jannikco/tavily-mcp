@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 1,
+  "id": "tavily-mcp",
+  "kind": "provider-connector",
+  "artifactType": "connector",
+  "qualityVersion": 2,
+  "title": "Tavily MCP server",
+  "description": "Search for relevant documentation and pass selected result URLs to extraction. Review both extracted pages and per-URL failures before citing content. Provider credits apply.",
+  "status": "ready",
+  "verification": "mock-only",
+  "releaseEligible": true,
+  "maintainer": "jannikco",
+  "license": "MIT",
+  "product": "pipmcp",
+  "appSlug": "tavily",
+  "appName": "Tavily",
+  "operationIds": [
+    "search_web",
+    "extract_urls"
+  ],
+  "sourceRevision": "283f830550511eff8da95ff4372011a99d48544d0b0ba29f73a064928b485718",
+  "evidence": [
+    "Actual tools/call and direct-provider request contract tests"
+  ],
+  "provenance": [
+    "https://docs.tavily.com/documentation/api-reference/openapi.json"
+  ],
+  "attributionSlug": "github-tavily-mcp",
+  "connectorId": "tavily",
+  "connector": {
+    "id": "tavily",
+    "name": "Tavily",
+    "version": "0.1.0",
+    "baseUrl": "https://api.tavily.com",
+    "auth": {
+      "type": "bearer",
+      "env": "TAVILY_API_KEY"
+    },
+    "description": "Search and extract public web content with explicit bounded input. Read requests consume provider credits; per-URL extraction failures remain visible in the raw result.",
+    "tools": [
+      {
+        "name": "search_web",
+        "description": "Search with bounded result count; provider usage/credits still apply to read-only calls.",
+        "method": "POST",
+        "path": "/search",
+        "readOnly": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            "max_results": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            },
+            "search_depth": {
+              "type": "string",
+              "enum": [
+                "basic",
+                "advanced"
+              ]
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false
+        },
+        "bindings": {
+          "path": [],
+          "query": {},
+          "body": {
+            "query": "query",
+            "max_results": "max_results",
+            "search_depth": "search_depth"
+          }
+        },
+        "sampleArguments": {
+          "query": "Qdrant vector database documentation",
+          "max_results": 5,
+          "search_depth": "basic"
+        },
+        "provenance": [
+          "https://docs.tavily.com/documentation/api-reference/openapi.json"
+        ]
+      },
+      {
+        "name": "extract_urls",
+        "description": "Extract supplied HTTPS URLs; inspect failed_results as well as results, even when HTTP status is 200.",
+        "method": "POST",
+        "path": "/extract",
+        "readOnly": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "urls": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048,
+                "pattern": "^https://[^\\s]+$"
+              },
+              "minItems": 1,
+              "maxItems": 20
+            },
+            "extract_depth": {
+              "type": "string",
+              "enum": [
+                "basic",
+                "advanced"
+              ]
+            }
+          },
+          "required": [
+            "urls"
+          ],
+          "additionalProperties": false
+        },
+        "bindings": {
+          "path": [],
+          "query": {},
+          "body": {
+            "urls": "urls",
+            "extract_depth": "extract_depth"
+          }
+        },
+        "sampleArguments": {
+          "urls": [
+            "https://qdrant.tech/documentation/"
+          ],
+          "extract_depth": "basic"
+        },
+        "provenance": [
+          "https://docs.tavily.com/documentation/api-reference/openapi.json"
+        ]
+      }
+    ],
+    "provenance": [
+      "https://docs.tavily.com/documentation/api-reference/openapi.json"
+    ],
+    "sourceEvidence": [
+      {
+        "url": "https://docs.tavily.com/documentation/api-reference/openapi.json",
+        "sha256": "c97103b0bfa3613e4cf64470ee0a78de1e50a88d7999c48507a8db871cb0e97b",
+        "checkedAt": "2026-11-08T13:24:07.469650+00:00",
+        "method": "https-get"
+      }
+    ],
+    "verification": "mock-only",
+    "providerLiveValidation": "not-run",
+    "workflow": {
+      "name": "Research and inspect source pages",
+      "description": "Search for relevant documentation and pass selected result URLs to extraction. Review both extracted pages and per-URL failures before citing content. Provider credits apply.",
+      "steps": [
+        "search_web",
+        "extract_urls"
+      ]
+    },
+    "repoId": "tavily-mcp",
+    "appSlug": "tavily",
+    "product": "pipmcp",
+    "artifactType": "connector",
+    "sourceRevision": "283f830550511eff8da95ff4372011a99d48544d0b0ba29f73a064928b485718",
+    "capabilityEvidence": {
+      "local": {
+        "level": "Tested",
+        "operations": [
+          {
+            "name": "search_web",
+            "level": "Tested",
+            "evidenceRefs": [
+              "Provider request/stdio contract tests"
+            ],
+            "method": "contract-fixture"
+          },
+          {
+            "name": "extract_urls",
+            "level": "Tested",
+            "evidenceRefs": [
+              "Provider request/stdio contract tests"
+            ],
+            "method": "contract-fixture"
+          }
+        ],
+        "evidenceRefs": [
+          "Provider request/stdio contract tests"
+        ],
+        "mode": "local"
+      },
+      "managed": {
+        "level": "Documented",
+        "operations": [
+          {
+            "name": "search_web",
+            "level": "Documented",
+            "evidenceRefs": [],
+            "method": "documentation"
+          },
+          {
+            "name": "extract_urls",
+            "level": "Documented",
+            "evidenceRefs": [],
+            "method": "documentation"
+          }
+        ],
+        "evidenceRefs": [],
+        "mode": "managed"
+      }
+    },
+    "managedAvailability": {
+      "status": "listed",
+      "checkedAt": "2026-11-08T13:20:45.156456+00:00"
+    }
+  },
+  "capabilityEvidence": {
+    "local": {
+      "level": "Tested",
+      "operations": [
+        {
+          "name": "search_web",
+          "level": "Tested",
+          "evidenceRefs": [
+            "Provider request/stdio contract tests"
+          ],
+          "method": "contract-fixture"
+        },
+        {
+          "name": "extract_urls",
+          "level": "Tested",
+          "evidenceRefs": [
+            "Provider request/stdio contract tests"
+          ],
+          "method": "contract-fixture"
+        }
+      ],
+      "evidenceRefs": [
+        "Provider request/stdio contract tests"
+      ],
+      "mode": "local"
+    },
+    "managed": {
+      "level": "Documented",
+      "operations": [
+        {
+          "name": "search_web",
+          "level": "Documented",
+          "evidenceRefs": [],
+          "method": "documentation"
+        },
+        {
+          "name": "extract_urls",
+          "level": "Documented",
+          "evidenceRefs": [],
+          "method": "documentation"
+        }
+      ],
+      "evidenceRefs": [],
+      "mode": "managed"
+    }
+  },
+  "utility": {
+    "problem": "Search for relevant documentation and pass selected result URLs to extraction. Review both extracted pages and per-URL failures before citing content. Provider credits apply.",
+    "output": "Actual provider API results through local MCP tools"
+  },
+  "providerDocs": "https://docs.tavily.com/documentation/api-reference/openapi.json",
+  "factory": "leadadapter-pipmcp",
+  "generatorVersion": 2
+}
